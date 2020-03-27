@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -27,7 +26,6 @@ const (
 
 // InitializeRoutes inits routes with <prefix>/strava/*
 func InitializeRoutes(engine *gin.Engine) {
-	engine.Use(location.Default())
 	stravaRoute := engine.Group(config.PathPrefix + "/strava")
 	{
 		stravaRoute.GET("/", stravaExchangeToken)

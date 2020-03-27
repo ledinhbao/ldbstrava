@@ -8,5 +8,5 @@ func getCallbackURLOrPanic(panic bool) string {
 			log.Panic("Failed to obtain URLCallbackHost for Strava Module.")
 		}
 	}
-	return config.URLCallbackHost + config.PathPrefix + config.PathSubscription
+	return config.URLCallbackHost + config.PathPrefix + "/strava" + config.PathSubscription
 }

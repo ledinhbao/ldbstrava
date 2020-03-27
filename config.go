@@ -27,7 +27,7 @@ var config *Config
 // SetConfig ...
 //   - ClientID: 			required
 //   - ClientSecret: 		required
-//   - PathPrefix:			"/admin" (default)
+//   - PathPrefix:			"/admin" (default, should be "" if you don't want any prefix. "/" will be converted to "")
 //   - PathSubscription:	"/subscription" (default, uses for Webhook callback)
 //	 - GlobalDatabase:		"database" (default)
 //	 - SubscriptionDBKey:	"strava-subscription" (default)
@@ -39,6 +39,10 @@ func SetConfig(c Config) {
 	mergo.Merge(&newConfig, c)
 	mergo.Merge(&newConfig, config)
 	config = &newConfig
+
+	if config.PathPrefix == "/" {
+		config.PathPrefix = ""
+	}
 }
 
 func (c *Config) getRedirectPath() string {
