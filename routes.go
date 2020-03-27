@@ -25,61 +25,6 @@ const (
 	subscriptionURL = string("https://www.strava.com/api/v3/push_subscriptions")
 )
 
-// Config struct contains configuration for Strava Package
-//   - SubscriptionDBKey	: strava subcsription key, stored in database, indicates exist subscription if present.
-type Config struct {
-	ClientID          string
-	ClientSecret      string
-	Scopes            []string
-	PathPrefix        string
-	PathRedirect      string
-	PathSubcription   string
-	GlobalDatabase    string
-	SubscriptionDBKey string
-}
-
-// config for package
-var config *Config
-
-func (c *Config) getRedirectPath() string {
-	return c.PathPrefix + c.PathRedirect
-}
-func (c *Config) GetRevokeURLFor(username string) string {
-	return c.PathPrefix + "/strava/revoke/" + username
-}
-func ActiveConfig() *Config { return config }
-
-// Athlete contains data reflects Strava's Athlete data.
-type Athlete struct {
-	gorm.Model
-	Profile       string `json:"profile"`
-	ProfileMedium string `json:"profile_medium" mapstructure:"profile_medium"`
-	Sex           string `json:"sex"`
-	State         string `json:"state"`
-	Username      string `json:"username"`
-	Country       string `json:"country"`
-	City          string `json:"city"`
-	Firstname     string `json:"firstname"`
-	Lastname      string `json:"lastname"`
-}
-
-// Link (aka Strava Link) contains data linked between app's user & strava's athlete data
-type Link struct {
-	gorm.Model
-	UserID       uint
-	Username     string
-	AccessToken  string `mapstructure:"access_token"`
-	RefreshToken string `mapstructure:"refresh_token"`
-	ExpiresAt    int    `mapstructure:"expires_at"`
-	ExpiresIn    int    `mapstructure:"expires_in"`
-	TokenType    string `mapstructure:"token_type"`
-}
-
-// TableName return table's name for strava's link records.
-func (Link) TableName() string {
-	return "strava_links"
-}
-
 // InitializeRoutes inits routes with <prefix>/strava/*
 func InitializeRoutes(engine *gin.Engine) {
 	stravaRoute := engine.Group(config.PathPrefix + "/strava")
@@ -115,14 +60,6 @@ func SetConfig(c Config) {
 	mergo.Merge(&newConfig, c)
 	mergo.Merge(&newConfig, config)
 	config = &newConfig
-}
-
-// GetAuthURL return authorize link to strava: ?client_id=<>&
-func (c Config) GetAuthURL() string {
-	res := fmt.Sprintf("https://www.strava.com/oauth/authorize?client_id=%s", c.ClientID)
-	res += fmt.Sprintf("&redirect_uri=%s", c.getRedirectPath)
-	res += fmt.Sprintf("&response_type=code&approval_prompt=auto&scope=%s", strings.Join(c.Scopes, ","))
-	return res
 }
 
 func stravaExchangeToken(c *gin.Context) {
