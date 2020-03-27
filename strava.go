@@ -21,8 +21,6 @@ import (
 const (
 	stravaAuthURL   = string("https://www.strava.com/oauth/authorize")
 	tokenURL        = string("https://www.strava.com/oauth/token")
-	clientID        = string("44814")
-	clientSecret    = string("c44a13c4308b3b834320ae5e3648d6c7855980a3")
 	revokeURL       = string("https://www.strava.com/oauth/deauthorize")
 	subscriptionURL = string("https://www.strava.com/api/v3/push_subscriptions")
 )
@@ -134,8 +132,8 @@ func stravaExchangeToken(c *gin.Context) {
 	} else {
 		// Exchange for access token
 		data := url.Values{}
-		data.Set("client_id", clientID)
-		data.Set("client_secret", clientSecret)
+		data.Set("client_id", config.ClientID)
+		data.Set("client_secret", config.ClientSecret)
 		data.Set("code", code)
 		data.Set("grant_type", "authorization_code")
 
