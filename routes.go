@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -26,6 +27,7 @@ const (
 
 // InitializeRoutes inits routes with <prefix>/strava/*
 func InitializeRoutes(engine *gin.Engine) {
+	engine.Use(location.Default())
 	stravaRoute := engine.Group(config.PathPrefix + "/strava")
 	{
 		stravaRoute.GET("/", stravaExchangeToken)
@@ -186,10 +188,11 @@ func ViewSubscription() string {
 	json.Unmarshal(body, &jsonBody)
 
 	if len(jsonBody) > 0 && resp.StatusCode == 200 {
-		// jsonBody := make(map[string]string)
-		// json.NewDecoder(resp.Body).Decode(&jsonBody)
-		return fmt.Sprintf("%v", jsonBody[0]["id"])
+		res := fmt.Sprintf("%v", jsonBody[0]["id"])
+		log.Println("Subscription exist at Strava endpoint with ID: ", res, " ###")
+		return res
 	}
+	log.Println("Subscription does not exist at Strava endpoint.")
 	return ""
 }
 
@@ -224,7 +227,6 @@ func CreateSubscription(db *gorm.DB) {
 	if notFoundSeting || setting.Value == "" {
 		// Un-sync between app and strava
 		subscriptionID := ViewSubscription()
-		log.Println("Get subscription ID from Strava", subscriptionID, " ####")
 		if subscriptionID != "" {
 			sendDeleteSubscription(subscriptionID)
 		}
