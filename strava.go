@@ -94,10 +94,9 @@ func InitializeRoutes(engine *gin.Engine) {
 }
 
 func init() {
-	fmt.Println("Called Strava Package init")
 	config = &Config{
-		ClientID:          "44814",
-		ClientSecret:      "c44a13c4308b3b834320ae5e3648d6c7855980a3",
+		ClientID:          "",
+		ClientSecret:      "",
 		PathPrefix:        "/admin",
 		PathRedirect:      "/dashboard",
 		PathSubcription:   "/subscription",
@@ -107,6 +106,12 @@ func init() {
 }
 
 // SetConfig ...
+//   - ClientID: 			required
+//   - ClientSecret: 		required
+//   - PathPrefix:			"/admin" (default)
+//   - PathSubscription:	"/subscription" (default)
+//	 - GlobalDatabase:		"database" (default)
+//	 - SubscriptionDBKey:	"strava-subscription" (default)
 func SetConfig(c Config) {
 	newConfig := Config{}
 	mergo.Merge(&newConfig, c)
@@ -311,7 +316,7 @@ func CreateSubscription(db *gorm.DB) {
 				db.Where(
 					core.Setting{Key: config.SubscriptionDBKey},
 				).Assign(
-					core.Setting{Value: fmt.Sprint("%v", subscriptionID)},
+					core.Setting{Value: fmt.Sprintf("%v", subscriptionID)},
 				).FirstOrCreate(&setting)
 			}
 		} else {
