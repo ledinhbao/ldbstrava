@@ -15,7 +15,7 @@ type Config struct {
 	Scopes            []string
 	PathPrefix        string
 	PathRedirect      string
-	PathSubcription   string
+	PathSubscription  string
 	GlobalDatabase    string
 	SubscriptionDBKey string
 	URLCallbackHost   string

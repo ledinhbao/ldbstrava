@@ -31,7 +31,7 @@ func InitializeRoutes(engine *gin.Engine) {
 		stravaRoute.GET("/", stravaExchangeToken)
 		stravaRoute.GET("/revoke/:username", stravaRevokeToken)
 		stravaRoute.GET("/list/:username", listActivitiesForYesterday)
-		stravaRoute.GET(config.PathSubcription, stravaValidateSubscription)
+		stravaRoute.GET(config.PathSubscription, stravaValidateSubscription)
 	}
 }
 
@@ -41,7 +41,7 @@ func init() {
 		ClientSecret:      "",
 		PathPrefix:        "/admin",
 		PathRedirect:      "/dashboard",
-		PathSubcription:   "/subscription",
+		PathSubscription:  "/subscription",
 		GlobalDatabase:    "database",
 		SubscriptionDBKey: "strava-subscription",
 		URLCallbackHost:   "",
