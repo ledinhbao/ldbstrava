@@ -3,6 +3,8 @@ package ldbstrava
 import (
 	"fmt"
 	"strings"
+
+	"github.com/imdario/mergo"
 )
 
 // Config struct contains configuration for Strava Package
@@ -16,10 +18,28 @@ type Config struct {
 	PathSubcription   string
 	GlobalDatabase    string
 	SubscriptionDBKey string
+	URLCallbackHost   string
 }
 
 // Active Config object for package
 var config *Config
+
+// SetConfig ...
+//   - ClientID: 			required
+//   - ClientSecret: 		required
+//   - PathPrefix:			"/admin" (default)
+//   - PathSubscription:	"/subscription" (default, uses for Webhook callback)
+//	 - GlobalDatabase:		"database" (default)
+//	 - SubscriptionDBKey:	"strava-subscription" (default)
+//   - URLCallbackHost:		(Current URL.Host, set different if you want to use another server, etc. ngrok)
+//
+//   Panic: if URLCallbackHost == "" and user call CreateSubcription()
+func SetConfig(c Config) {
+	newConfig := Config{}
+	mergo.Merge(&newConfig, c)
+	mergo.Merge(&newConfig, config)
+	config = &newConfig
+}
 
 func (c *Config) getRedirectPath() string {
 	return c.PathPrefix + c.PathRedirect

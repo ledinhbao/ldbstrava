@@ -11,7 +11,6 @@ import (
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/imdario/mergo"
 	"github.com/jinzhu/gorm"
 	"github.com/mitchellh/mapstructure"
 
@@ -45,21 +44,8 @@ func init() {
 		PathSubcription:   "/subscription",
 		GlobalDatabase:    "database",
 		SubscriptionDBKey: "strava-subscription",
+		URLCallbackHost:   "",
 	}
-}
-
-// SetConfig ...
-//   - ClientID: 			required
-//   - ClientSecret: 		required
-//   - PathPrefix:			"/admin" (default)
-//   - PathSubscription:	"/subscription" (default)
-//	 - GlobalDatabase:		"database" (default)
-//	 - SubscriptionDBKey:	"strava-subscription" (default)
-func SetConfig(c Config) {
-	newConfig := Config{}
-	mergo.Merge(&newConfig, c)
-	mergo.Merge(&newConfig, config)
-	config = &newConfig
 }
 
 func stravaExchangeToken(c *gin.Context) {
@@ -211,7 +197,7 @@ func sendSubscriptionCreationRequest() (int, map[string]interface{}) {
 	client := &http.Client{}
 	urlData := createBaseURLData()
 	urlData.Set("verify_token", getSubscriptionToken())
-	urlData.Set("callback_url", "http://bc7b66a4.ngrok.io/admin/strava/subscription")
+	urlData.Set("callback_url", getCallbackURLOrPanic(true))
 	req, _ := http.NewRequest("POST", subscriptionURL, nil)
 	req.URL.RawQuery = urlData.Encode()
 	// resp, _ := client.Post(subscriptionURL, "text/plain; charset=utf-8", strings.NewReader(urlData.Encode()))
